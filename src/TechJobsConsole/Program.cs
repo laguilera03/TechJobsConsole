@@ -9,6 +9,7 @@ namespace TechJobsConsole
         {
             // Create two Dictionary vars to hold info for menu and data
 
+
             // Top-level menu options
             Dictionary<string, string> actionChoices = new Dictionary<string, string>();
             actionChoices.Add("search", "Search");
@@ -63,7 +64,10 @@ namespace TechJobsConsole
                     // Fetch results
                     if (columnChoice.Equals("all"))
                     {
-                        Console.WriteLine("Search all fields not yet implemented.");
+                        searchResults = JobData.FindByValue(searchTerm, columnChoices);
+                        PrintJobs(searchResults);
+                        //Iterate all columns, looking for the searchResults
+                        //Add FindByValue method here
                     }
                     else
                     {
@@ -118,7 +122,25 @@ namespace TechJobsConsole
 
         private static void PrintJobs(List<Dictionary<string, string>> someJobs)
         {
-            Console.WriteLine("PrintJobs is not implemented yet");
+            if (0 == someJobs.Count)
+            {
+                Console.WriteLine("No results");
+            }
+            else
+            {
+                //Iterate the list of jobs
+                for (int i = 0; i < someJobs.Count; i++)
+                {
+                    //Iterate the dictonary within the list
+                    Console.WriteLine("*****");
+                    foreach (KeyValuePair<string, string> jobs in someJobs[i])
+                    {
+                        //Print out the keys and values formatted
+                        Console.WriteLine(jobs.Key + ": " + jobs.Value);
+                    }
+                    Console.WriteLine("*****\n");
+                }
+            }
         }
     }
 }

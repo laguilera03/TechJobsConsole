@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace TechJobsConsole
@@ -38,23 +40,25 @@ namespace TechJobsConsole
             return values;
         }
 
+        /*
+         * Gets the column choice and returns a set of columns
+         */
         public static List<Dictionary<string, string>> FindByColumnAndValue(string column, string value)
         {
             // load data, if not already loaded
             LoadData();
 
             List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
-
+            
             foreach (Dictionary<string, string> row in AllJobs)
             {
-                string aValue = row[column];
+                string aValue = row[column].ToLower();
 
-                if (aValue.Contains(value))
+                if (aValue.Contains(value.ToLower()))
                 {
                     jobs.Add(row);
                 }
             }
-
             return jobs;
         }
 
@@ -137,6 +141,45 @@ namespace TechJobsConsole
             valueBuilder.Clear();
 
             return rowValues.ToArray();
+        }
+
+        /*
+         * Searches for each column and returns all rows of the list that includes the value
+         */
+        public static List<Dictionary<string, string>> FindByValue(string value, Dictionary<string, string> choices)
+        {
+            // load data, if not already loaded
+            LoadData();
+
+            // Initialize the search
+            List<Dictionary<string, string>> search = new List<Dictionary<string, string>>();
+
+            // Make the search list for all columns to exclude all in order to decrease column search redundancy
+            List<string> allChoices = new List<string>(); //all choices except all (new ones can be added too)
+            foreach (KeyValuePair<string, string> choice in choices)
+            {
+                if (choice.Key != "all")
+                {
+                    allChoices.Add(choice.Key);
+                }
+            }
+
+            // iterate all choices and build the dictionary
+            foreach (Dictionary<string, string> job in AllJobs)
+            {
+                for (int i = 0; i < allChoices.Count; i++)
+                {
+                    string find = job[allChoices[i]].ToLower();//case insensitive
+                    if (find.Contains(value.ToLower()))//case insensitive
+                    {
+                        search.Add(job);
+                        break;//stops from having to iterate each line
+                    }
+                }
+            }
+
+            // Return the search list with dictionaries that include the value
+            return search;
         }
     }
 }
